@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>craiglist</title>
+    <link rel="stylesheet" href="https://bootswatch.com/4/sketchy/bootstrap.min.css">
+    <style>
+        .loading {
+            width: 200px;
+
+        }
+
+        .loading-warp {
+            text-align: center;
+        }
+
+        .group-button {
+            position: absolute;
+        }
+
+        div#top-right {
+            top: 0;
+            right: 0;
+        }
+
+        .icon {
+            cursor: pointer;
+        }
+
+        .deleteTerm {
+            position: absolute;
+            top: -6px;
+            right: -5px;
+        }
+
+        .ha {
+            position: relative;
+        }
+
+        .fav {
+            color: #fff;
+            background-color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container" id="app">
+        <div class="page-header">
+            <h1>Craigslist</h1>
+            <p class="lead">List of all international <a
+                    href="https://www.craigslist.org/about/sites">craigslist.org</a> online classifieds sites.</p>
+        </div>
+        <form class="bs-component" @submit.prevent="addTerm">
+            <div class="form-group">
+                <label class="col-form-label" for="term">Term</label>
+                <input v-model="term" type="text" class="form-control" placeholder="enter search term..." id="term">
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+
+        <div class="bs-component mt-4">
+            <ul class="nav nav-tabs">
+                <a @click="showFav(fav)" class="nav-link fav" href="#"> <img src="./icon/fav.svg" alt="fav"> fav </a>
+                <li @click="searchTerm(term)" class="ha nav-item" v-for="term in terms">
+                    <img @click="deleteTerm(term)" class="icon deleteTerm" src="./icon/term-delete.svg"
+                        alt="term delete">
+                    <a :class="{ active: activeTerm == term }" class="nav-link" href="#">{{ term }}</a>
+                </li>
+            </ul>
+            <div class="tab-content container-fluid">
+                <div class="loading-warp">
+                    <img v-if="loading" class="loading" src="./icon/loading.svg" alt="loading">
+                </div>
+                <div class="row mt-2">
+
+                    <div v-for="(result, index) in activeResults" v-if="!deleted[result.url]"
+                        class=" mb-3 col-6 col-lg-3 col-md-3 col-sm-6 col-xs-6 my-2 p-2 text-center ">
+                        <div class="group-button" id="top-right">
+                            <img @click="addFav(index)" class="icon" src="./icon/fav.svg" alt="delete">
+                            <img @click="deleteResult(result)" class="icon" src="./icon/remove.svg" alt="fav">
+                        </div>
+                        <p> <em> {{ result.hood }} </em></p>
+                        <a :href="result.url" target="_blank">
+                            <img v-if="result.images.length > 0" :src="result.images[0]" :alt="result.title"
+                                class="img-fluid">
+                            <img v-else src="https://dummyimage.com/200x200/000/fff&text=null" :alt="result.title">
+                        </a>
+                        <p> {{ result.title }} </p>
+                        <p> {{ result.price }} </p>
+                    </div>
+
+                </div>
+                <p class="loading-warp" v-show="!activeResults.length">Not Found</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- production version, optimized for size and speed -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
